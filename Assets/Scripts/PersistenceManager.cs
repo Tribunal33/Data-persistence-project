@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,6 +17,7 @@ public class PersistenceManager : MonoBehaviour
     public class SavePlayerData{
         public string playerName;
         public int playerScore;
+        public int highScore;
 
     }
     void Awake(){
@@ -31,6 +33,7 @@ public class PersistenceManager : MonoBehaviour
         SavePlayerData data = new SavePlayerData();
         data.playerName = playerName;
         data.playerScore = playerScore;
+        data.highScore = playerHighScore;
         string json = JsonUtility.ToJson(data);
         File.WriteAllText(Application.persistentDataPath + "/saveplayerdata.json", json);
     }
@@ -48,6 +51,20 @@ public class PersistenceManager : MonoBehaviour
     }
 
     public void StartGame(){
+        SavePlayerInfo();
         SceneManager.LoadScene("main");
+    }
+
+    public void QuitGame(){
+        #if UNITY_EDITOR
+            EditorApplication.ExitPlaymode();
+        #else
+            Application.Quit();
+        #endif
+    }
+
+    public int CheckHighScore(int currentScore){
+
+        return 0;
     }
 }
