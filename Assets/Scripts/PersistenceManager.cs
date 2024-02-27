@@ -1,19 +1,14 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using TMPro;
 
 public class PersistenceManager : MonoBehaviour
 {
     public static PersistenceManager Instance;
     public TextMeshProUGUI topScoreText;
-    public int playerHighScore;
     private GameObject playerNameObject;
     public string playerInput;
     public string playerName;
@@ -22,7 +17,6 @@ public class PersistenceManager : MonoBehaviour
     public class SavePlayerData{
         public string playerName;
         public int playerScore;
-        public int currentHighScore;
 
     }
     void Awake(){
@@ -34,19 +28,10 @@ public class PersistenceManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
         LoadHighScore();
-        Debug.Log("Finished Loading");
     }
     public void PlayerInputChange(string text){
         Debug.Log(text);
         playerInput = playerNameObject.GetComponent<TMP_InputField>().text;
-    }
-    public void SavePlayerInfo(){
-        Debug.Log("Saving Player...");
-        SavePlayerData data = new SavePlayerData();
-        data.playerName = playerName;
-        data.playerScore = playerScore;
-        string json = JsonUtility.ToJson(data);
-        File.WriteAllText(Application.persistentDataPath + "/saveplayerdata.json", json);
     }
 
     public void LoadHighScore(){
@@ -59,7 +44,7 @@ public class PersistenceManager : MonoBehaviour
                 Debug.Log("Gathering data...");
                 playerName = data.playerName;
                 playerScore = data.playerScore;
-                topScoreText.text = "Best Score : " + playerScore + " By: " + playerName ;
+                topScoreText.text = "Best Score : " + playerScore + ", By: " + playerName ;
             }
             
         }
@@ -81,10 +66,5 @@ public class PersistenceManager : MonoBehaviour
         #else
             Application.Quit();
         #endif
-    }
-
-    public int CheckHighScore(int currentScore){
-
-        return currentScore > playerHighScore ? currentScore : playerHighScore;
     }
 }

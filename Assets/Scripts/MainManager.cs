@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -27,8 +25,6 @@ public class MainManager : MonoBehaviour
     public class PlayerData{
         public string playerName;
         public int playerScore;
-        public int currentHighScore;
-
     }
 
     public void LoadPlayerData(){
@@ -39,8 +35,6 @@ public class MainManager : MonoBehaviour
 
             highScorePlayerName = data.playerName;
             highScorePlayerScore = data.playerScore;
-
-
         }
     }
     
@@ -48,7 +42,7 @@ public class MainManager : MonoBehaviour
     void Start()
     {
         LoadPlayerData();
-        TopScoreText.text = "Top Score: " + highScorePlayerScore + " By: " + highScorePlayerName;
+        TopScoreText.text = "Top Score: " + highScorePlayerScore + ", By: " + highScorePlayerName;
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
