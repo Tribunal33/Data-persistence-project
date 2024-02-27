@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,17 +13,42 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text TopScoreText;
     public GameObject GameOverText;
+    public string highScorePlayerName;
+    public int highScorePlayerScore;
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
 
+    [Serializable]
+    public class PlayerData{
+        public string playerName;
+        public int playerScore;
+        public int currentHighScore;
+
+    }
+
+    public void LoadPlayerData(){
+        string path = Application.persistentDataPath + "/saveplayerdata.json";
+        if(File.Exists(path)){
+            string json = File.ReadAllText(path);
+            PlayerData data = JsonUtility.FromJson<PlayerData>(json);
+
+            highScorePlayerName = data.playerName;
+            highScorePlayerScore = data.playerScore;
+
+
+        }
+    }
     
     // Start is called before the first frame update
     void Start()
     {
+        LoadPlayerData();
+        TopScoreText.text = "Top Score: " + highScorePlayerScore + " By: " + highScorePlayerName;
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -45,7 +72,7 @@ public class MainManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 m_Started = true;
-                float randomDirection = Random.Range(-1.0f, 1.0f);
+                float randomDirection = UnityEngine.Random.Range(-1.0f, 1.0f);
                 Vector3 forceDir = new Vector3(randomDirection, 1, 0);
                 forceDir.Normalize();
 
@@ -72,5 +99,16 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        if(m_Points > highScorePlayerScore){
+            SavePlayerInfo();
+        }
+    }
+    public void SavePlayerInfo(){
+        Debug.Log("Saving Player...");
+        PlayerData data = new PlayerData();
+        data.playerName = PersistenceManager.Instance.playerName;
+        data.playerScore = m_Points;
+        string json = JsonUtility.ToJson(data);
+        File.WriteAllText(Application.persistentDataPath + "/saveplayerdata.json", json);
     }
 }
